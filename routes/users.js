@@ -45,10 +45,21 @@ router.put('/:username', async (req, res, next)=> {
 })
 
 router.get('/', async (req, res)=> {
-    const all = await userSchema.find({}, {_id: false, __v: false, password: false})
+    let all
+    if(req.body.limit !== 0) {
+        all = await userSchema.find({}, {
+            _id: false,
+            __v: false,
+            password: false
+        }).skip(req.body.offset).limit(req.body.limit)
+    }
+    const count = await userSchema.countDocuments()
     res.status(200).send({
         success: true,
-        result: all
+        result: {
+            count,
+            values: all
+        }
     })
 })
 
