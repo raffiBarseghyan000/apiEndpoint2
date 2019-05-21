@@ -1,6 +1,7 @@
-const jwt = require('jsonwebtoken');
-const path = process.cwd();
-const userSchema = require(`${path}/schemas/userSchema`);
+const jwt = require('jsonwebtoken')
+const path = process.cwd()
+const userSchema = require(`${path}/schemas/userSchema`)
+const tokenSchema = require(`${path}/schemas/expiedTokenSchema`)
 
 let getUsernameFromToken = (req, res, next) => {
     let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
@@ -44,7 +45,29 @@ const getUserByUsername = (req, res, next)=> {
     })
 }
 
+const checkTokenLoggedOut = (req, res, next)=> {
+    let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
+    if (token && token.startsWith('Bearer ')) {
+        // Remove Bearer from string
+        token = token.slice(7, token.length);
+    }
+    tokenSchema.find({token: token}, {_id: false}).then((result)=> {
+        if(result.lengh) {
+            return res.sendStatus(400).send({
+                success: false,
+                message: 'Auth token is expired'
+            })
+        }
+        else {
+            next()
+        }
+    }).catch((err)=> {
+        next(err)
+    })
+}
+
 module.exports = {
     getUsernameFromToken,
-    getUserByUsername
+    getUserByUsername,
+    checkTokenLoggedOut
 }

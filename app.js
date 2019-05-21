@@ -14,7 +14,9 @@ const port = process.env.app_port || 9999
 
 app.use('/login', require('./routes/login.js'))
 
-app.use(tokenUtil.getUsernameFromToken, tokenUtil.getUserByUsername, (req, res, next)=> {
+app.use('/logout', require('./routes/logout.js'))
+
+app.use(tokenUtil.checkTokenLoggedOut, tokenUtil.getUsernameFromToken, tokenUtil.getUserByUsername, (req, res, next)=> {
     //get username from jwt
     //get user form db based on username
     //assign user object to req.user
@@ -33,10 +35,12 @@ app.use((req, res) => {
 })
 
 app.use((err, req, res, next) => {
-    res.status(500).send({
-        success: false,
-        message: err.message
-    })
+    if(err) {
+        res.sendStatus(500).send({
+            success: false,
+            message: err.message
+        })
+    }
 })
 
 http.listen(port, () => {

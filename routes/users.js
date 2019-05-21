@@ -44,23 +44,28 @@ router.put('/:username', async (req, res, next)=> {
     }
 })
 
-router.get('/', async (req, res)=> {
-    let all
-    if(req.body.limit !== 0) {
-        all = await userSchema.find({}, {
-            _id: false,
-            __v: false,
-            password: false
-        }).skip(req.body.offset).limit(req.body.limit)
-    }
-    const count = await userSchema.countDocuments()
-    res.status(200).send({
-        success: true,
-        result: {
-            count,
-            values: all
+router.get('/', async (req, res, next)=> {
+    try {
+        let all
+        if (parseInt(req.query.limit) !== 0) {
+            all = await userSchema.find({}, {
+                _id: false,
+                __v: false,
+                password: false
+            }).skip(parseInt(req.query.offset)).limit(parseInt(req.query.limit))
         }
-    })
+        const count = await userSchema.countDocuments()
+        res.status(200).send({
+            success: true,
+            result: {
+                count,
+                values: all
+            }
+        })
+    }
+    catch(err) {
+        next(err)
+    }
 })
 
 module.exports = router;
