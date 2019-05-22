@@ -12,7 +12,25 @@ router.post('/', async (req, res, next)=> {
         // Remove Bearer from string
         token = token.slice(7, token.length);
     }
-    await new tokenSchema(token).save()
+    try {
+        await new tokenSchema({token: token}).save()
+        res.status(200).send({
+            success: true,
+            message: "User logged out"
+        })
+    }
+    catch (err) {
+        let a = err.message
+        if(err.message.indexOf("E11000 duplicate key error") > -1) {
+            res.status(200).send({
+                success: true,
+                message: "User logged out"
+            })
+        }
+        else {
+            next()
+        }
+    }
 })
 
 module.exports = router

@@ -30,13 +30,12 @@ let getUsernameFromToken = (req, res, next) => {
     }
 };
 
-const getUserByUsername = (req, res, next)=> {
-    userSchema.find({username: req.username}, {_id: false, __v: false}).then((user)=> {
+const getUserByUsername = (req, res, next) => {
+    userSchema.find({username: req.username}, {_id: false, __v: false}).then((user) => {
         req.user = user
-        if(req.user.length !== 0) {
+        if (req.user.length !== 0) {
             next()
-        }
-        else{
+        } else {
             return res.status(400).send({
                 success: false,
                 message: 'Auth token is not valid'
@@ -45,23 +44,22 @@ const getUserByUsername = (req, res, next)=> {
     })
 }
 
-const checkTokenLoggedOut = (req, res, next)=> {
+const checkTokenLoggedOut = (req, res, next) => {
     let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
     if (token && token.startsWith('Bearer ')) {
         // Remove Bearer from string
         token = token.slice(7, token.length);
     }
-    tokenSchema.find({token: token}, {_id: false}).then((result)=> {
-        if(result.lengh) {
-            return res.sendStatus(400).send({
+    tokenSchema.find({token: token}, {_id: false}).then((result) => {
+        if (result.lengh) {
+            return res.status(400).send({
                 success: false,
                 message: 'Auth token is expired'
             })
-        }
-        else {
+        } else {
             next()
         }
-    }).catch((err)=> {
+    }).catch((err) => {
         next(err)
     })
 }
