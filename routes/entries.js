@@ -16,11 +16,26 @@ router.post('/', async (req, res)=> {
 })
 
 router.get('/', async (req, res)=> {
-    const result = await defaultSchema.find({}, {_id: false, __v: false})
-    res.status(200).send({
-        success: true,
-        result: result
-    })
+    try {
+        let all
+        if (parseInt(req.query.limit) !== 0) {
+            all = await defaultSchema.find({}, {
+                _id: false,
+                __v: false
+            }).skip(parseInt(req.query.offset)).limit(parseInt(req.query.limit))
+        }
+        const count = await defaultSchema.countDocuments()
+        res.status(200).send({
+            success: true,
+            result: {
+                count: count,
+                values: all
+            }
+        })
+    }
+    catch (err) {
+        next(err)
+    }
 })
 
 router.delete('/', async (req, res)=> {
