@@ -3,10 +3,10 @@ const express = require('express');
 const router = express.Router();
 
 const path = process.cwd();
-const defaultSchema = require(`${path}/schemas/defaultSchema.js`);
+const entrySchema = require(`${path}/schemas/entrySchema.js`);
 
 router.post('/', async (req, res)=> {
-    const schemaObject = new defaultSchema(req.body)
+    const schemaObject = new entrySchema(req.body)
     console.log(req.body)
     await schemaObject.save()
     res.status(200).send({
@@ -19,12 +19,12 @@ router.get('/', async (req, res)=> {
     try {
         let all
         if (parseInt(req.query.limit) !== 0) {
-            all = await defaultSchema.find({}, {
+            all = await entrySchema.find({}, {
                 _id: false,
                 __v: false
             }).skip(parseInt(req.query.offset)).limit(parseInt(req.query.limit))
         }
-        const count = await defaultSchema.countDocuments()
+        const count = await entrySchema.countDocuments()
         res.status(200).send({
             success: true,
             result: {
@@ -39,7 +39,7 @@ router.get('/', async (req, res)=> {
 })
 
 router.delete('/', async (req, res)=> {
-    await defaultSchema.deleteMany({})
+    await entrySchema.deleteMany({})
     res.status(200).send({
         success: true,
         message: 'All entries are deleted'
