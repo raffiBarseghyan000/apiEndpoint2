@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 let TokenSchema = new mongoose.Schema({
     token: {
@@ -7,8 +7,8 @@ let TokenSchema = new mongoose.Schema({
         unique: true,
         trim: true
     }
-});
+})
 
-let tokenSchema = mongoose.model('TokenSchema', TokenSchema);
+let tokenSchema = mongoose.model('TokenSchema', TokenSchema)
 
-module.exports = tokenSchema;
+module.exports = tokenSchema

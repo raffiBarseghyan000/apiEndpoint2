@@ -1,7 +1,23 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-let dynamicSchema = new mongoose.Schema({}, {strict: false});
+let EntrySchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true,
+    },
+    value: {
+        type: String,
+        required: true,
+        trim: true
+    }
+})
 
-let entrySchema = mongoose.model('entrySchema', dynamicSchema);
+EntrySchema.statics.getEntryByName = async (name)=> {
+    return await entrySchema.findOne({name}, {_id: true})
+}
 
-module.exports = entrySchema;
+let entrySchema = mongoose.model('entrySchema', EntrySchema)
+
+module.exports = entrySchema

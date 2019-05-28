@@ -1,7 +1,7 @@
-const express = require('express');
-let jwt = require('jsonwebtoken');
+const express = require('express')
+let jwt = require('jsonwebtoken')
 
-const router = express.Router();
+const router = express.Router()
 
 const path = process.cwd()
 const userSchema = require(`${path}/schemas/userSchema`)
@@ -18,24 +18,24 @@ router.post('/', async (req, res)=> {
                 {
                     expiresIn: '24h' // expires in 24 hours
                 }
-            );
+            )
             // return the JWT token for the future API calls
             res.status(200).send({
                 success: true,
                 message: 'Authentication successful!',
                 token: token
-            });
+            })
         } else {
             res.status(403).send({
                 success: false,
                 message: 'Incorrect username or password'
-            });
+            })
         }
     } else {
         res.status(400).send({
             success: false,
             message: 'Username and/or password not supplied'
-        });
+        })
     }
 })
 

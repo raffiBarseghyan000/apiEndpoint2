@@ -1,9 +1,11 @@
-const express = require('express');
+const express = require('express')
 
-const router = express.Router();
+const router = express.Router()
 
-const path = process.cwd();
-const userSchema = require(`${path}/schemas/userSchema`);
+const path = process.cwd()
+const userSchema = require(`${path}/schemas/userSchema`)
+const entrySchema = require(`${path}/schemas/entrySchema`)
+const userEntryJunctionSchema = require(`${path}/schemas/userEntryJunction`)
 
 router.post('/', async (req, res, next)=> {
     try {
@@ -40,6 +42,70 @@ router.put('/:username', async (req, res, next)=> {
         })
     }
     catch(err) {
+        next(err)
+    }
+})
+
+router.delete('/attachedEntry/:username', async (req, res, next)=> {
+    try {
+        const userId = await userSchema.getIdByUsername(req.params.username)
+        const entryIds = []
+        const failedArray = []
+        req.body.entries.map(async (entryName) => {
+            try {
+                entryIds.push({entryName, id: await entrySchema.getIdByName(entryName)})
+            }
+            catch (err) {
+                entryIds.push({entryName, id: null, err: err.message})
+            }
+        })
+        entryIds.map(async (entryId)=> {
+            if (entryId.id) {
+                await userEntryJunctionSchema.deleteOne({user: userId, entry: entryId.id})
+            }
+            else {
+                failedArray.push({entryName: entryId.entryName, reason: entryId.err})
+            }
+        })
+        res.status(200).send({
+            success: true,
+            message: failedArray
+        })
+    }
+    catch (err) {
+        next(err)
+    }
+})
+
+router.post('/attachedEntry/:username', async (req, res, next)=> {
+    try {
+        const userId = await userSchema.getIdByUsername(req.params.username)
+        const entryIds = []
+        const failedArray = []
+        req.body.entries.map(async (entryName, index) => {
+            try {
+                const id = await entrySchema.getIdByName(entryName)
+                entryIds.push({entryName, id})
+            }
+            catch (err) {
+                entryIds.push({entryName, id: null, err: err.message})
+            }
+        })
+        entryIds.map(async (entryId)=> {
+            if (entryId.id) {
+                await userEntryJunctionSchema.save({user: userId, entry: entryId.id})
+            }
+            else {
+                failedArray.push({entryName: entryId.entryName, reason: entryId.err})
+            }
+        })
+        res.status(200).send({
+            success: true,
+            message: failedArray
+
+        })
+    }
+    catch (err) {
         next(err)
     }
 })
@@ -84,4 +150,4 @@ router.get('/', async (req, res, next)=> {
     }
 })
 
-module.exports = router;
+module.exports = router

@@ -21,7 +21,7 @@ app.use(tokenUtil.checkTokenLoggedOut, tokenUtil.getUsernameFromToken, tokenUtil
     //get user form db based on username
     //assign user object to req.user
     next()
-});
+})
 
 app.use('/entries', require('./routes/entries.js'))
 
@@ -36,7 +36,7 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
     if(err) {
-        res.sendStatus(500).send({
+        res.status(500).send({
             success: false,
             message: err.message
         })

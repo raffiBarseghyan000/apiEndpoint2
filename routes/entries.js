@@ -1,18 +1,23 @@
-const express = require('express');
+const express = require('express')
 
-const router = express.Router();
+const router = express.Router()
 
-const path = process.cwd();
-const entrySchema = require(`${path}/schemas/entrySchema.js`);
+const path = process.cwd()
+const entrySchema = require(`${path}/schemas/entrySchema.js`)
 
-router.post('/', async (req, res)=> {
-    const schemaObject = new entrySchema(req.body)
-    console.log(req.body)
-    await schemaObject.save()
-    res.status(200).send({
-        success: true,
-        message: 'Insertion Completed'
-    })
+router.post('/', async (req, res, next)=> {
+    try {
+        const schemaObject = new entrySchema(req.body)
+        console.log(req.body)
+        await schemaObject.save()
+        res.status(200).send({
+            success: true,
+            message: 'Insertion Completed'
+        })
+    }
+    catch(err) {
+        next(err)
+    }
 })
 
 router.get('/', async (req, res)=> {
@@ -46,4 +51,4 @@ router.delete('/', async (req, res)=> {
     })
 })
 
-module.exports = router;
+module.exports = router
