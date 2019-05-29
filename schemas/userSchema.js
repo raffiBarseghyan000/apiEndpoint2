@@ -34,8 +34,8 @@ UserSchema.methods.comparePassword = function(password) {
     return this.password === pbkdf2.pbkdf2Sync(password, 'salt', 1, 32, 'sha512').toString('hex')
 }
 
-UserSchema.statics.getIdByUsername = function(username) {
-    return userSchema.findOne({username}, {_id: true})._id
+UserSchema.statics.getIdByUsername = async function (username) {
+    return await userSchema.findOne({username}, {_id: true})
 }
 
 const userSchema = mongoose.model('userSchema', UserSchema)

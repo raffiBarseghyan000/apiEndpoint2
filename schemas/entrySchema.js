@@ -14,7 +14,7 @@ let EntrySchema = new mongoose.Schema({
     }
 })
 
-EntrySchema.statics.getEntryByName = async (name)=> {
+EntrySchema.statics.getIdByName = async (name)=> {
     return await entrySchema.findOne({name}, {_id: true})
 }
 

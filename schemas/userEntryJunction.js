@@ -7,7 +7,7 @@ const UserEntryJunctionSchema = new mongoose.Schema({
     user: {
         validate: {
             validator: (v)=> {
-                return User.findOne({_id: v})
+                return User.findOne({username: v})
             },
             message: 'invalid username'
         },
@@ -17,7 +17,7 @@ const UserEntryJunctionSchema = new mongoose.Schema({
     entry: {
         validate: {
             validator: (v)=> {
-                return Entry.findOne({_id: v})
+                return Entry.findOne({name: v})
             },
             message: 'invalid entry'
         },
