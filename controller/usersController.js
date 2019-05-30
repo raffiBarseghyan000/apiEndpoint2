@@ -4,6 +4,7 @@ const router = express.Router()
 
 const path = process.cwd()
 const userSchema = require(`${path}/schemas/userSchema`)
+const userEntryJunctionSchema = require(`${path}/schemas/userEntryJunction`)
 
 
 router.post('/', async (req, res, next) => {
@@ -20,6 +21,7 @@ router.post('/', async (req, res, next) => {
 
 router.delete('/:username', async (req, res, next) => {
     try {
+        await userEntryJunctionSchema.deleteMany({user: req.params.username})
         await userSchema.deleteOne({username: req.params.username})
         res.status(200).send({
             success: true,
