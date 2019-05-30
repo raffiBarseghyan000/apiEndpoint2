@@ -43,6 +43,48 @@ router.get('/', async (req, res)=> {
     }
 })
 
+router.get('/:entry', async (req, res, next) => {
+    const result = await entrySchema.findOne({name: req.params.entry}, {_id: false, __v: false})
+    if (result === null) {
+        res.status(400).send({
+            success: false,
+            message: `entry with ${req.params.entry} name not found`
+        })
+    } else {
+        res.status(200).send({
+            success: true,
+            result: result
+        })
+    }
+})
+
+router.put('/:name', async (req, res, next) => {
+    try {
+        delete req.body.name
+        const response = await entrySchema.findOneAndUpdate({name: req.params.name}, req.body)
+        if(response) {
+            res.status(200).send({
+                success: true,
+                message: `Entry updated`
+            })
+        }
+    } catch (err) {
+        next(err)
+    }
+})
+
+router.delete('/:name', async (req, res, next) => {
+    try {
+        await entrySchema.deleteOne({name: req.params.name})
+        res.status(200).send({
+            success: true,
+            message: 'Entry has been deleted'
+        })
+    } catch (err) {
+        next(err)
+    }
+})
+
 router.delete('/', async (req, res)=> {
     await entrySchema.deleteMany({})
     res.status(200).send({

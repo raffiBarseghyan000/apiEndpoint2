@@ -4,8 +4,7 @@ const router = express.Router()
 
 const path = process.cwd()
 const userSchema = require(`${path}/schemas/userSchema`)
-const entrySchema = require(`${path}/schemas/entrySchema`)
-const userEntryJunctionSchema = require(`${path}/schemas/userEntryJunction`)
+
 
 router.post('/', async (req, res, next) => {
     try {
@@ -33,36 +32,18 @@ router.delete('/:username', async (req, res, next) => {
 
 router.put('/:username', async (req, res, next) => {
     try {
-        await userSchema.findOneAndUpdate({username: req.params.username}, req.body)
-        res.status(200).send({
-            success: true,
-            message: `User updated`
-        })
+        delete req.body.username
+        delete req.body.password
+        const response = await userSchema.findOneAndUpdate({username: req.params.username}, req.body)
+        if(response) {
+            res.status(200).send({
+                success: true,
+                message: `User updated`
+            })
+        }
     } catch (err) {
         next(err)
     }
-})
-
-router.delete('/attachedEntry/:username', (req, res, next) => {
-    userEntryJunctionSchema.deleteOne({user: req.params.username, entry: req.body.entry}).then(() => {
-        res.status(200).send({
-            success: true,
-            message: "Entry detached"
-        })
-    }).catch((err) => {
-        next(err)
-    })
-})
-
-router.post('/attachedEntry/:username', (req, res, next) => {
-    new userEntryJunctionSchema({user: req.params.username, entry: req.body.entry}).save().then(() => {
-        res.status(200).send({
-            success: true,
-            message: "Entry attached"
-        })
-    }).catch((err) => {
-        next(err)
-    })
 })
 
 router.get('/:username', async (req, res, next) => {
