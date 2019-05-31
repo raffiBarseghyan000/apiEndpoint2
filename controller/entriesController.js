@@ -4,6 +4,7 @@ const router = express.Router()
 
 const path = process.cwd()
 const entrySchema = require(`${path}/schemas/entrySchema.js`)
+const userEntryJunctionSchema = require(`${path}/schemas/userEntryJunction.js`)
 
 router.post('/', async (req, res, next)=> {
     try {
@@ -75,11 +76,20 @@ router.put('/:name', async (req, res, next) => {
 
 router.delete('/:name', async (req, res, next) => {
     try {
-        await entrySchema.deleteOne({name: req.params.name})
-        res.status(200).send({
-            success: true,
-            message: 'Entry has been deleted'
-        })
+        const response = await userEntryJunctionSchema.findOne({entry: req.params.name})
+        if(response === null) {
+            await entrySchema.deleteOne({name: req.params.name})
+            res.status(200).send({
+                success: true,
+                message: 'Entry has been deleted'
+            })
+        }
+        else {
+            res.status(400).send({
+                success: false,
+                message: 'Enttry has user(s) attached to it, deattach and try again'
+            })
+        }
     } catch (err) {
         next(err)
     }
