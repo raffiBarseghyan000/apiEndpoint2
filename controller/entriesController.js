@@ -95,12 +95,4 @@ router.delete('/:name', async (req, res, next) => {
     }
 })
 
-router.delete('/', async (req, res)=> {
-    await entrySchema.deleteMany({})
-    res.status(200).send({
-        success: true,
-        message: 'All entries are deleted'
-    })
-})
-
 module.exports = router
