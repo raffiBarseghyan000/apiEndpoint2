@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
-router.use('/', require('../controller/entriesController'))
+router.use('/users', require('./userEntryJunction'))
+
+router.use('/', require('./modEntries'))
 
 module.exports = router

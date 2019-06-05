@@ -14,10 +14,6 @@ let EntrySchema = new mongoose.Schema({
     }
 })
 
-EntrySchema.statics.getIdByName = async (name)=> {
-    return await entrySchema.findOne({name}, {_id: true})
-}
-
 let entrySchema = mongoose.model('entrySchema', EntrySchema)
 
 module.exports = entrySchema

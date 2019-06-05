@@ -25,17 +25,8 @@ const UserSchema = new mongoose.Schema({
     },
 })
 
-UserSchema.pre('save', function (next) {
-    this.password = pbkdf2.pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512').toString('hex')
-    next()
-})
-
 UserSchema.methods.comparePassword = function(password) {
     return this.password === pbkdf2.pbkdf2Sync(password, 'salt', 1, 32, 'sha512').toString('hex')
-}
-
-UserSchema.statics.getIdByUsername = async function (username) {
-    return await userSchema.findOne({username}, {_id: true})
 }
 
 const userSchema = mongoose.model('userSchema', UserSchema)

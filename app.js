@@ -27,8 +27,6 @@ app.use('/entries', require('./routes/entries.js'))
 
 app.use('/users', require('./routes/users.js'))
 
-app.use('/attachedEntry', require('./routes/userEntryJunction.js'))
-
 app.use((req, res) => {
     res.status(404).send({
         success: false,
